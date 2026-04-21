@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Srabani Acharya — Certifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --indigo: #3d2fa3;
+  --pink: #ff2d78;
+  --cyan: #00f5d4;
+  --amber: #ffbe0b;
+  --bg: #06060f;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --text: #e8e8f0;
+  --muted: #7a7a99;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: linear-gradient(var(--pink), var(--cyan)); border-radius: 3px; }
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
+
+/* CURSOR */
+#cursor-dot {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(0,245,212,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.12s ease, width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+/* LOADER */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+#loader.hidden { opacity: 0; visibility: hidden; }
+.loader-initials {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--pink), var(--cyan), var(--amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite;
+  background-size: 200% auto;
+  letter-spacing: -2px;
+}
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.loader-bar-wrap {
+  margin-top: 2.5rem;
+  width: 220px;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.loader-bar {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan), var(--amber), var(--pink));
+  background-size: 200% auto;
+  animation: barfill 2s ease forwards, shimmer 1.5s linear infinite;
+}
+@keyframes barfill { 0% { width: 0; } 100% { width: 100%; } }
+.loader-label {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* CANVAS */
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 6%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  background: rgba(6,6,15,0.6);
+  border-bottom: 1px solid var(--border);
+  transform: translateY(-100%);
+  transition: transform 0.6s cubic-bezier(.22,.68,0,1.2);
+}
+nav.visible { transform: translateY(0); }
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: linear-gradient(90deg, var(--pink), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1.5px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan));
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { width: 100%; }
+
+/* MAIN */
+main { position: relative; z-index: 1; }
+
+/* HERO */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem 6% 4rem;
+  text-align: center;
+  flex-direction: column;
+}
+.hero-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 2.2s ease forwards;
+}
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 9vw, 7.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -3px;
+  background: linear-gradient(135deg, #fff 0%, var(--pink) 35%, var(--cyan) 65%, var(--amber) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 300% auto;
+  animation: shimmer 4s linear infinite, fadeUp 0.8s 2.4s ease both;
+  opacity: 0;
+}
+.hero-subtitle {
+  margin-top: 1rem;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--muted);
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.8s 2.6s ease forwards;
+  max-width: 560px;
+}
+.hero-cta {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 0.8s 2.8s ease forwards;
+}
+.btn {
+  padding: 0.75rem 2rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: none;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.05em;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), var(--indigo));
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(255,45,120,0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,45,120,0.5); }
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--surface);
+}
+.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+/* 3D CARD */
+.card-3d-wrap {
+  margin-top: 4rem;
+  perspective: 1200px;
+  opacity: 0;
+  animation: fadeUp 1s 3s ease forwards;
+}
+.card-3d {
+  width: min(440px, 90vw);
+  background: linear-gradient(135deg, rgba(61,47,163,0.3), rgba(255,45,120,0.15));
+  border: 1px solid rgba(0,245,212,0.2);
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: left;
+  transform-style: preserve-3d;
+  animation: float3d 6s ease-in-out infinite;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+.card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, rgba(0,245,212,0.06));
+  border-radius: inherit;
+}
+@keyframes float3d {
+  0%   { transform: rotateX(4deg) rotateY(-6deg) translateY(0); }
+  33%  { transform: rotateX(-3deg) rotateY(5deg) translateY(-12px); }
+  66%  { transform: rotateX(5deg) rotateY(-2deg) translateY(-6px); }
+  100% { transform: rotateX(4deg) rotateY(-6deg) translateY(0); }
+}
+.card-3d-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 0.75rem;
+}
+.card-3d-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.card-3d-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+.card-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.chip-pink { background: rgba(255,45,120,0.15); color: var(--pink); border: 1px solid rgba(255,45,120,0.3); }
+.chip-cyan { background: rgba(0,245,212,0.1); color: var(--cyan); border: 1px solid rgba(0,245,212,0.25); }
+.chip-amber { background: rgba(255,190,11,0.1); color: var(--amber); border: 1px solid rgba(255,190,11,0.25); }
+.chip-indigo { background: rgba(61,47,163,0.3); color: #a89bff; border: 1px solid rgba(61,47,163,0.5); }
+
+/* SECTIONS */
+section { padding: 6rem 6%; }
+.section-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--pink);
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 1rem;
+}
+.section-desc {
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+/* REVEAL ANIMATIONS */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-left.visible { opacity: 1; transform: none; }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-right.visible { opacity: 1; transform: none; }
+
+/* SKILLS */
+#skills { background: rgba(255,255,255,0.015); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.skill-item { margin-bottom: 1.25rem; }
+.skill-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+.skill-name { font-size: 0.85rem; font-weight: 500; }
+.skill-pct { font-size: 0.78rem; color: var(--muted); }
+.skill-track {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.skill-fill {
+  height: 100%;
+  border-radius: 99px;
+  width: 0;
+  transition: width 1.2s cubic-bezier(.22,.68,0,1.2);
+}
+.skill-fill.pink { background: linear-gradient(90deg, var(--pink), #ff6baf); }
+.skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), #00c4aa); }
+.skill-fill.amber { background: linear-gradient(90deg, var(--amber), #ffda70); }
+.skill-fill.indigo { background: linear-gradient(90deg, #7c6dff, var(--indigo)); }
+
+/* MARQUEE */
+.marquee-wrap {
+  overflow: hidden;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  mask-image: linear-gradient(90deg, transparent, #fff 15%, #fff 85%, transparent);
+}
+.marquee-track {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.marquee-item {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.marquee-item .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* CERT CARDS */
+#certificates .certs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.cert-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+.cert-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan), var(--amber));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.cert-card:hover::before { transform: scaleX(1); }
+.cert-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0,245,212,0.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.cert-issuer {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.cert-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+.cert-date {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.cert-id {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-family: monospace;
+  word-break: break-all;
+  opacity: 0.6;
+}
+.cert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.badge-active { background: rgba(0,245,212,0.1); color: var(--cyan); border: 1px solid rgba(0,245,212,0.25); }
+.badge-expired { background: rgba(255,45,120,0.08); color: #ff6b9d; border: 1px solid rgba(255,45,120,0.2); }
+.badge-active::before, .badge-expired::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* CONTACT */
+#contact {
+  text-align: center;
+  position: relative;
+}
+.ripple-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ripple-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  border: 1px solid rgba(255,45,120,0.15);
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple 3s ease-out infinite;
+}
+.ripple-ring:nth-child(1) { width: 200px; height: 200px; animation-delay: 0s; }
+.ripple-ring:nth-child(2) { width: 400px; height: 400px; animation-delay: 0.8s; }
+.ripple-ring:nth-child(3) { width: 600px; height: 600px; animation-delay: 1.6s; }
+.ripple-ring:nth-child(4) { width: 800px; height: 800px; animation-delay: 2.4s; }
+@keyframes ripple {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+.contact-inner { position: relative; z-index: 1; }
+.contact-email {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--pink), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+  display: block;
+  text-decoration: none;
+}
+.contact-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+.contact-link {
+  padding: 0.6rem 1.4rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  font-weight: 500;
+}
+.contact-link:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+/* FOOTER */
+footer {
+  padding: 2rem 6%;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* KEYFRAMES */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  nav { padding: 0 4%; }
+  .nav-links { gap: 1rem; }
+  .nav-links a { font-size: 0.72rem; }
+  section { padding: 4rem 4%; }
+  .certs-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-initials">SA</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-label">Loading Portfolio</div>
+</div>
+
+<!-- CANVAS -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Srabani Acharya</div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certificates">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">Digital Marketing Specialist · Performance & Growth</div>
+  <h1 class="hero-name">Srabani Acharya</h1>
+  <p class="hero-subtitle">Multi-platform certified digital marketing expert specializing in paid advertising, SEO, analytics, and e-commerce growth.</p>
+  <div class="hero-cta">
+    <a href="#certificates" class="btn btn-primary">View Certifications</a>
+    <a href="https://www.linkedin.com/in/srabani-acharya/" target="_blank" class="btn btn-ghost">LinkedIn Profile</a>
+  </div>
+  <div class="card-3d-wrap">
+    <div class="card-3d">
+      <div class="card-3d-label">Expertise Overview</div>
+      <div class="card-3d-title">Digital Marketing & Advertising</div>
+      <div class="card-3d-meta">Google · Meta · Amazon · SEMrush · HubSpot · Microsoft</div>
+      <div class="card-chips">
+        <span class="chip chip-pink">Google Ads</span>
+        <span class="chip chip-cyan">SEO</span>
+        <span class="chip chip-amber">Amazon Ads</span>
+        <span class="chip chip-indigo">Social Media</span>
+        <span class="chip chip-pink">E-commerce</span>
+        <span class="chip chip-cyan">Analytics</span>
+        <span class="chip chip-amber">PPC</span>
+        <span class="chip chip-indigo">DSP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marquee-track"></div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal-left">
+    <div class="section-label">Core Competencies</div>
+    <h2 class="section-title">Skills & Proficiency</h2>
+    <p class="section-desc">Certified expertise across the full digital marketing stack — from paid search and programmatic to SEO, analytics, and e-commerce operations.</p>
+  </div>
+  <div class="skills-grid reveal">
+    <div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">Google Ads (Search, Display, Shopping)</span><span class="skill-pct">95%</span></div><div class="skill-track"><div class="skill-fill cyan" data-width="95"></div></div></div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">Amazon Advertising (Sponsored + DSP)</span><span class="skill-pct">90%</span></div><div class="skill-track"><div class="skill-fill amber" data-width="90"></div></div></div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">SEO (Technical + On-page)</span><span class="skill-pct">90%</span></div><div class="skill-track"><div class="skill-fill pink" data-width="90"></div></div></div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">Social Media Advertising (Meta)</span><span class="skill-pct">88%</span></div><div class="skill-track"><div class="skill-fill indigo" data-width="88"></div></div></div>
+    </div>
+    <div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">Digital Marketing Strategy</span><span class="skill-pct">92%</span></div><div class="skill-track"><div class="skill-fill cyan" data-width="92"></div></div></div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">E-commerce & Retail Media</span><span class="skill-pct">88%</span></div><div class="skill-track"><div class="skill-fill amber" data-width="88"></div></div></div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">Marketing Analytics & Measurement</span><span class="skill-pct">85%</span></div><div class="skill-track"><div class="skill-fill pink" data-width="85"></div></div></div>
+      <div class="skill-item"><div class="skill-header"><span class="skill-name">Business Analysis</span><span class="skill-pct">80%</span></div><div class="skill-track"><div class="skill-fill indigo" data-width="80"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTS -->
+<section id="certificates">
+  <div class="reveal">
+    <div class="section-label">Credentials</div>
+    <h2 class="section-title">Certifications</h2>
+    <p class="section-desc">Industry-recognized credentials from leading platforms, covering every dimension of digital marketing and advertising.</p>
+  </div>
+  <div class="certs-grid" id="certs-grid"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="ripple-wrap">
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+  </div>
+  <div class="contact-inner reveal">
+    <div class="section-label">Get In Touch</div>
+    <h2 class="section-title">Let's Work Together</h2>
+    <p class="section-desc" style="margin:0 auto 2rem;">Open to performance marketing, e-commerce, and digital strategy roles. Reach out to connect.</p>
+    <a href="https://www.linkedin.com/in/srabani-acharya/" class="contact-email">linkedin.com/in/srabani-acharya</a>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/srabani-acharya/details/certifications/" target="_blank" class="contact-link">All Certifications on LinkedIn</a>
+      <a href="https://www.linkedin.com/in/srabani-acharya/" target="_blank" class="contact-link">LinkedIn Profile</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <p>© 2025 Srabani Acharya &nbsp;·&nbsp; Digital Marketing Specialist &nbsp;·&nbsp; Built with passion</p>
+</footer>
+
+<script>
+// ── CURSOR ──────────────────────────────────────────────────────────────
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+
+// ── LOADER ───────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+    document.getElementById('navbar').classList.add('visible');
+  }, 2000);
+});
+
+// ── PARTICLES ────────────────────────────────────────────────────────────
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+const COLORS = ['#ff2d78','#00f5d4','#ffbe0b','#7c6dff'];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function mkParticle() {
+  return {
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: (Math.random() - 0.5) * 0.5,
+    r: Math.random() * 2 + 1,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    alpha: Math.random() * 0.5 + 0.2
+  };
+}
+for (let i = 0; i < 90; i++) particles.push(mkParticle());
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+    for (let j = i + 1; j < particles.length; j++) {
+      const q = particles[j];
+      const dx = p.x - q.x, dy = p.y - q.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = p.color;
+        ctx.globalAlpha = (1 - d / 120) * 0.15;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── MARQUEE ──────────────────────────────────────────────────────────────
+const platforms = [
+  { name: 'Google', color: '#00f5d4' },
+  { name: 'Meta', color: '#ff2d78' },
+  { name: 'Amazon Ads', color: '#ffbe0b' },
+  { name: 'SEMrush', color: '#7c6dff' },
+  { name: 'HubSpot', color: '#ff2d78' },
+  { name: 'Microsoft Advertising', color: '#00f5d4' },
+  { name: 'Coursera', color: '#ffbe0b' },
+  { name: 'University of Illinois', color: '#7c6dff' },
+  { name: 'Google Digital Marketing', color: '#00f5d4' },
+  { name: 'Amazon DSP', color: '#ff2d78' },
+];
+const track = document.getElementById('marquee-track');
+const doubled = [...platforms, ...platforms];
+doubled.forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'marquee-item';
+  el.innerHTML = `<span class="dot" style="background:${p.color}"></span>${p.name}`;
+  track.appendChild(el);
+});
+
+// ── CERTS DATA ────────────────────────────────────────────────────────────
+const certs = [
+  {
+    issuer: 'University of Illinois · Coursera',
+    issuerColor: '#7c6dff',
+    title: 'Digital Marketing Specialization',
+    date: 'May 15, 2021',
+    status: 'active',
+    id: 'G3L7JQQM838S',
+    link: 'https://coursera.org/verify/specialization/G3L7JQQM838S',
+    chips: ['7 Courses', 'SEO', 'Analytics', 'Strategy', 'Capstone']
+  },
+  {
+    issuer: 'Google · Coursera',
+    issuerColor: '#00f5d4',
+    title: 'Google Digital Marketing & E-commerce Professional Certificate',
+    date: 'April 23, 2023',
+    status: 'active',
+    id: 'KW44Z6J3SRGM',
+    link: 'https://coursera.org/verify/professional-cert/KW44Z6J3SRGM',
+    chips: ['7 Courses', 'E-commerce', 'Email Marketing', 'Analytics', 'Customer Loyalty']
+  },
+  {
+    issuer: 'Meta · Coursera',
+    issuerColor: '#ff2d78',
+    title: 'Fundamentals of Social Media Advertising',
+    date: 'Feb 21, 2021',
+    status: 'active',
+    id: 'ZUD3JU6ZUFDS',
+    link: 'https://coursera.org/verify/ZUD3JU6ZUFDS',
+    chips: ['Social Ads', 'Meta Ads', 'Campaign Strategy']
+  },
+  {
+    issuer: 'Google Skillshop',
+    issuerColor: '#00f5d4',
+    title: 'Google Ads Display Certification',
+    date: 'March 2023',
+    status: 'active',
+    id: '146159825',
+    chips: ['Display Ads', 'Audience Targeting', 'GDN']
+  },
+  {
+    issuer: 'Google Skillshop',
+    issuerColor: '#00f5d4',
+    title: 'Google Shopping Ads Certification',
+    date: 'February 2023',
+    status: 'active',
+    id: '143155068',
+    chips: ['Shopping Ads', 'Product Feeds', 'Merchant Center']
+  },
+  {
+    issuer: 'SEMrush Academy',
+    issuerColor: '#ffbe0b',
+    title: 'SEO Fundamentals Exam',
+    date: 'June 2021',
+    status: 'expired',
+    id: '5139448fed39306',
+    chips: ['SEO', 'Technical SEO', 'Keyword Research']
+  },
+  {
+    issuer: 'Amazon Ads Academy',
+    issuerColor: '#ffbe0b',
+    title: 'Amazon Sponsored Ads Advanced Certification',
+    date: 'June 27, 2027',
+    status: 'active',
+    id: '',
+    chips: ['Sponsored Products', 'Sponsored Brands', 'Advanced PPC']
+  },
+  {
+    issuer: 'Amazon Ads Academy',
+    issuerColor: '#ffbe0b',
+    title: 'Amazon Ads Foundations Certification',
+    date: 'December 2022',
+    status: 'expired',
+    id: '2888460',
+    chips: ['Foundations', 'Ad Formats', 'Attribution']
+  },
+  {
+    issuer: 'Amazon Ads Academy',
+    issuerColor: '#ffbe0b',
+    title: 'Amazon Sponsored Ads Certification',
+    date: 'January 2023',
+    status: 'expired',
+    id: '2888462',
+    chips: ['Sponsored Ads', 'Bidding', 'Targeting']
+  },
+  {
+    issuer: 'Amazon Ads Academy',
+    issuerColor: '#ffbe0b',
+    title: 'Amazon Retail for Advertisers Certification',
+    date: 'February 2023',
+    status: 'expired',
+    id: '3017617',
+    chips: ['Retail Media', 'E-commerce', 'Shopper Marketing']
+  },
+  {
+    issuer: 'Amazon Ads Academy',
+    issuerColor: '#ffbe0b',
+    title: 'Amazon Ads Retail Certification',
+    date: 'February 12, 2023',
+    status: 'expired',
+    id: 'abafcf51-5cab-4b2d-9973-95739ea60501',
+    chips: ['Retail', 'Shopper Insights', 'Campaign Ops']
+  },
+  {
+    issuer: 'Amazon Ads Academy',
+    issuerColor: '#ffbe0b',
+    title: 'Amazon DSP Campaigns Certification',
+    date: 'April 2024',
+    status: 'expired',
+    id: '',
+    chips: ['DSP', 'Programmatic', 'Audience Segments']
+  },
+  {
+    issuer: 'Microsoft Advertising',
+    issuerColor: '#00f5d4',
+    title: 'Digital Advertising Fundamentals',
+    date: 'February 13, 2024',
+    status: 'active',
+    id: 'Credly Badge',
+    chips: ['Search', 'Display', 'Shopping', 'Foundations']
+  },
+  {
+    issuer: 'HubSpot Academy',
+    issuerColor: '#ff2d78',
+    title: 'SEO Certified',
+    date: 'Jan 20, 2025 – Feb 19, 2026',
+    status: 'active',
+    id: 'f720761d02694dc98b7b5fa41b0c4d4a',
+    chips: ['SEO', 'On-page', 'Link Building', 'HubSpot']
+  },
+  {
+    issuer: 'Simplilearn SkillUp',
+    issuerColor: '#7c6dff',
+    title: 'Business Analysis Basics',
+    date: 'January 11, 2025',
+    status: 'active',
+    id: '7764854',
+    chips: ['Business Analysis', 'Requirements', 'Stakeholder Mgmt']
+  },
+];
+
+const grid = document.getElementById('certs-grid');
+certs.forEach((c, i) => {
+  const delay = (i % 3) * 0.1;
+  const div = document.createElement('div');
+  div.className = 'cert-card reveal';
+  div.style.transitionDelay = delay + 's';
+  const statusClass = c.status === 'active' ? 'badge-active' : 'badge-expired';
+  const statusText = c.status === 'active' ? 'Active' : 'Expired';
+  const chipsHtml = c.chips.map(ch => {
+    const colors = ['chip-pink','chip-cyan','chip-amber','chip-indigo'];
+    const cl = colors[Math.floor(Math.random() * colors.length)];
+    return `<span class="chip ${cl}">${ch}</span>`;
+  }).join('');
+  const linkHtml = c.link ? `<a href="${c.link}" target="_blank" style="display:inline-block;margin-top:1rem;font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.8;transition:opacity 0.2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">↗ Verify Certificate</a>` : '';
+  div.innerHTML = `
+    <span class="cert-badge ${statusClass}">${statusText}</span>
+    <div class="cert-issuer" style="color:${c.issuerColor}">${c.issuer}</div>
+    <div class="cert-title">${c.title}</div>
+    <div class="cert-date">${c.date}</div>
+    <div class="card-chips">${chipsHtml}</div>
+    ${c.id ? `<div class="cert-id" style="margin-top:0.75rem">ID: ${c.id}</div>` : ''}
+    ${linkHtml}
+  `;
+  grid.appendChild(div);
+});
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────────
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+// ── SKILL BARS ────────────────────────────────────────────────────────────
+const fills = document.querySelectorAll('.skill-fill');
+const skillObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.width = e.target.dataset.width + '%';
+      skillObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+fills.forEach(f => skillObserver.observe(f));
+</script>
+</body>
+</html>
